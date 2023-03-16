@@ -17,6 +17,13 @@ from tap_criteo.streams.reports import dimensions, metrics, analytics_type_mappi
 SCHEMAS_DIR = Path(__file__).parent.parent / "./schemas"
 API_VERSION = "2023-01"
 
+class CampaignsStream(CriteoSearchStream):
+    """Campaigns stream."""
+
+    name = "campaigns"
+    path = "/preview/marketing-solutions/campaigns/search"
+    schema_filepath = SCHEMAS_DIR / "campaign.json"
+    
 class AudiencesStream(CriteoStream):
     """Audiences stream."""
 
@@ -89,7 +96,7 @@ class StatsReportStream(CriteoStream):
             if breadcrumb and selected:
                 if breadcrumb[-1] in dimensions:
                     self.dimensions.append(breadcrumb[-1])
-                elif breadcrumb[-1] in metrics:
+                elif breadcrumb[-1] in metrics and breadcrumb[-1] != "Currency":
                     self.metrics.append(breadcrumb[-1])
 
         catalog_entry.key_properties = self.dimensions
@@ -146,10 +153,14 @@ class StatsReportStream(CriteoStream):
         Returns:
             Mutated record dictionary.
         """
+
         for key in row:
+            self.logger.info("Key: %s", key)
             func = value_func_mapping.get(key)
             if func:
                 row[key] = func(row[key])
+
+        row["Currency"] = self.config['currency']
 
         return row
 
