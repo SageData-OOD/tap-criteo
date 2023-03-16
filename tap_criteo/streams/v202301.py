@@ -21,7 +21,7 @@ class CampaignsStream(CriteoSearchStream):
     """Campaigns stream."""
 
     name = "campaigns"
-    path = "/preview/marketing-solutions/campaigns/search"
+    path = f"/{API_VERSION}/marketing-solutions/campaigns/search"
     schema_filepath = SCHEMAS_DIR / "campaign.json"
     
 class AudiencesStream(CriteoStream):

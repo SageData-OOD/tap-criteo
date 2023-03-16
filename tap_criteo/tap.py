@@ -14,6 +14,8 @@ OBJECT_STREAMS: Dict[str, List[Type[CriteoStream]]] = {
         v202301.AudiencesStream,
         v202301.AdvertisersStream,
         v202301.AdSetsStream,
+        v202301.CampaignsStream,
+
     ]
 }
 
