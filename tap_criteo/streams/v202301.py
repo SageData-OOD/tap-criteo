@@ -155,7 +155,6 @@ class StatsReportStream(CriteoStream):
         """
 
         for key in row:
-            self.logger.info("Key: %s", key)
             func = value_func_mapping.get(key)
             if func:
                 row[key] = func(row[key])
