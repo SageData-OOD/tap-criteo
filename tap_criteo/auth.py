@@ -35,3 +35,8 @@ class CriteoAuthenticator(OAuthAuthenticator):
             An authenticator object.
         """
         return cls(stream=stream, auth_endpoint="https://api.criteo.com/oauth2/token")
+
+    def update_access_token(self) -> None:
+        ret = OAuthAuthenticator.update_access_token(self)
+        # self.logger.info("***********ACCESS TOKEN: %s", self.access_token)
+        return ret

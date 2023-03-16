@@ -4,23 +4,33 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Callable, Dict
 
-analytics_type_mappings = {
+dimensions = {
+    # "Ad": {"type": "string"},
+    # "AdId": {"type": "string"},
     "Adset": {"type": "string"},
     "AdsetId": {"type": "string"},
     "Campaign": {"type": "string"},
     "CampaignId": {"type": "string"},
     "Advertiser": {"type": "string"},
     "AdvertiserId": {"type": "string"},
-    "Category": {"type": "string"},
-    "CategoryId": {"type": "string"},
+    # "Category": {"type": "string"},
+    # "CategoryId": {"type": "string"},
     "OS": {"type": "string"},
     "Device": {"type": "string"},
-    "Currency": {"type": "string"},
-    "Year": {"type": "string", "format": "date"},
-    "Month": {"type": "string", "format": "date"},
-    "Week": {"type": "string", "format": "date"},
+    "MarketingObjective": {"type": "string"},
+    "MarketingObjectiveId": {"type": "string"},
+    "CouponId": {"type": "string"}, 
+    "Coupon": {"type": "string"},
+    # "Year": {"type": "string", "format": "date"},
+    # "Month": {"type": "string", "format": "date"},
+    # "Week": {"type": "string", "format": "date"},
     "Day": {"type": "string", "format": "date"},
-    "Hour": {"type": "string", "format": "date-time"},
+    # "Hour": {"type": "string", "format": "date-time"},
+}
+
+#list of criteo metrics for campaigns from https://developers.criteo.com/marketing-solutions/docs/campaign-statistics#metrics
+metrics = {
+    "Currency": {"type": "string"},
     "Clicks": {"type": "integer"},
     "Displays": {"type": "integer"},
     "Visits": {"type": "integer"},
@@ -48,8 +58,11 @@ analytics_type_mappings = {
     "RevenueGeneratedPc1d": {"type": "number"},
     "RevenueGeneratedAllPc1d": {"type": "number"},
     "RevenueGeneratedPc7d": {"type": "number"},
-    "RevenueGeneratedAllPc7d": {"type": "number"},
+    "RevenueGeneratedAllPc7d": {"type": "number"}
 }
+
+# merge dimensions and metrics
+analytics_type_mappings = {**dimensions, **metrics}
 
 # TODO: reduce repetition here?
 value_func_mapping: Dict[str, Callable[[str], Any]] = {

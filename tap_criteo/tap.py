@@ -6,25 +6,18 @@ from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
 from tap_criteo.client import CriteoStream
-from tap_criteo.streams import v202007, v202104, v202107
+from tap_criteo.streams import v202301
+
 
 OBJECT_STREAMS: Dict[str, List[Type[CriteoStream]]] = {
-    "legacy": [
-        v202007.AudiencesStream,
-        v202007.CampaignsStream,
-        v202007.CategoriesStream,
-    ],
     "current": [
-        v202104.AudiencesStream,
-        v202104.AdvertisersStream,
-        v202104.AdSetsStream,
-    ],
-    "preview": [
-        v202107.CampaignsStream,
-    ],
+        v202301.AudiencesStream,
+        v202301.AdvertisersStream,
+        v202301.AdSetsStream,
+    ]
 }
 
-REPORTS_BASE = v202104.StatsReportStream
+REPORTS_BASE = v202301.StatsReportStream
 
 
 class TapCriteo(Tap):
@@ -35,21 +28,9 @@ class TapCriteo(Tap):
     config_jsonschema = th.PropertiesList(
         th.Property("client_id", th.StringType, required=True),
         th.Property("client_secret", th.StringType, required=True),
-        th.Property("advertiser_ids", th.ArrayType(th.StringType), required=True),
+        th.Property("currency", th.StringType, default="USD"),
         th.Property("start_date", th.DateTimeType, required=True),
-        th.Property(
-            "reports",
-            th.ArrayType(
-                th.ObjectType(
-                    th.Property("name", th.StringType, required=True),
-                    th.Property(
-                        "dimensions", th.ArrayType(th.StringType), required=True
-                    ),
-                    th.Property("metrics", th.ArrayType(th.StringType), required=True),
-                    th.Property("currency", th.StringType, default="USD"),
-                )
-            ),
-        ),
+        th.Property("end_date", th.DateTimeType, required=False),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:
@@ -60,12 +41,12 @@ class TapCriteo(Tap):
         """
         objects = [
             stream_class(tap=self)
-            for api in ("current", "preview")
+            for api in ("current",)
             for stream_class in OBJECT_STREAMS[api]
         ]
 
         reports = [
-            REPORTS_BASE(tap=self, report=report) for report in self.config["reports"]
+            REPORTS_BASE(tap=self)
         ]
 
         return objects + reports

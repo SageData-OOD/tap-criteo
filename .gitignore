@@ -2,6 +2,9 @@
 .meltano/
 output/
 
+# vs code local history
+.lh
+
 # Secrets and internal config files
 **/.secrets/*
 
