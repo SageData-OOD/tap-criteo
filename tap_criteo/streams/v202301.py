@@ -83,9 +83,6 @@ class StatsReportStream(CriteoStream):
 
         super().__init__(tap, schema=schema)
 
-    # def _write_schema_message(self) -> None:
-    #     CriteoStream._write_schema_message(self)
-
     def apply_catalog(self, catalog: singer.Catalog) -> None:
         """Extract the dimensions and metrics from the catalog."""
 
@@ -101,16 +98,14 @@ class StatsReportStream(CriteoStream):
 
         catalog_entry.key_properties = self.dimensions
         catalog_entry.metadata.root.table_key_properties = catalog_entry.key_properties
-        # Hack to remove stream mapping as it interferes 
-        # with the above key_properties overrides. The better way would be to 
-        # edit the stream mapper itself to allow for key_properties overrides.
-        self._tap.mapper = None
         
         self.logger.info("Computed DIMENSIONS: %s", self.dimensions)
         self.logger.info("Computed METRICS: %s", self.metrics)
         self.logger.info("Computed PRIMARY KEYS: %s", self.primary_keys)
 
         super().apply_catalog(catalog)
+
+        self._tap.mapper.register_raw_streams_from_catalog(catalog)
 
     def prepare_request_payload(
         self,
